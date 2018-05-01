@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Google reCAPTHA Demo</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src='https://www.google.com/recaptcha/api.js'></script>
+
+</head>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>Google reCAPTHA Demo</h1>
+</div>
+  
+<div class="container">
+  <div class="row">
+    <div class="col-sm-4">
+      <h3>Column 1</h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+    <div class="col-sm-4">
+      <form id="comment_form" action="form.php" method="post">
+        <input type="email" name="email" placeholder="Type your email" size="40"><br><br>
+        <textarea name="comment" rows="8" cols="39"></textarea><br><br>
+        <input type="submit" name="submit" value="Post comment"><br><br>
+        <div class="g-recaptcha" data-sitekey="6LdOf1YUAAAAAEDvTVOSJ-aqn19_P1J34OdOQeDA"></div>
+
+      </form>
+    </div>
+    <div class="col-sm-4">
+      <h3>Column 3</h3>        
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit...</p>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris...</p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $("#comment_form").submit(function(event){
+    event.preventDefault();
+    // console.log("values",$("#comment_form").serialize())
+    console.log("values",$("#comment_form").serializeArray())
+    var serialize = $("#comment_form").serialize();
+    var getCaptchaNode = serialize.split("&");
+    // console.log(getCaptchaNode[2])
+    var captchaSplit = (getCaptchaNode[2]).split("=");
+    // console.log(captchaSplit)
+    var gCaptchaResponse = captchaSplit[1];
+    // console.log(gCaptchaResponse);
+
+    // g-api response check
+    if(gCaptchaResponse){
+      $.ajax({
+        method:"POST",
+        url:"https://www.google.com/recaptcha/api/siteverify",
+        data:{
+          secret : "6LdOf1YUAAAAACPlr9uNCCCZtLH9JBq2ipgqF6Wg",
+          response : gCaptchaResponse,
+          remoteip : "111.119.238.98"
+        },
+        headers:{
+          'Access-Control-Allow-Origin':"*",
+          'Access-Control-Allow-Methods':"GET,POST"
+        },
+        contentType:'application/json',
+        success:function(result){
+          console.log(result)
+        },
+        error:function(failure) {
+          console.log(failure)
+        }
+      })
+    }
+  })
+</script>
+</body>
+</html>
